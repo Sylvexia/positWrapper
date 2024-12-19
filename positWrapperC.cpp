@@ -1,47 +1,6 @@
 #include <universal/number/posit/posit.hpp>
 #include <positWrapperC.h>
 
-// revise: NaR
-template <size_t nbits, typename uType>
-void wrap(uType a, sw::universal::bitblock<nbits> &raw) {
-  for (size_t i = 0; i < nbits; i++) {
-    raw[i] = a & 1;
-    a >>= 1;
-  }
-  // if negative, two's complement except the sign bit
-  if (raw[nbits - 1]) {
-    sw::universal::bitblock<nbits - 1> remain;
-    for (size_t i = 0; i < nbits - 1; i++) {
-      remain[i] = raw[i];
-    }
-    remain = sw::universal::internal::twos_complement(remain);
-    for (size_t i = 0; i < nbits - 1; i++) {
-      raw[i] = remain[i];
-    }
-  }
-}
-
-// revise: NaR
-template <size_t nbits, typename uType>
-void unwrap(sw::universal::bitblock<nbits> &raw, uType &a) {
-  if (raw[nbits - 1]) {
-    sw::universal::bitblock<nbits - 1> remain;
-    for (size_t i = 0; i < nbits - 1; i++) {
-      remain[i] = raw[i];
-    }
-    remain = sw::universal::internal::twos_complement(remain);
-    for (size_t i = 0; i < nbits - 1; i++) {
-      raw[i] = remain[i];
-    }
-  }
-
-  a = 0;
-  for (int i = (int)nbits - 1; i >= 0; i--) {
-    a <<= 1;
-    a |= raw[i];
-  }
-}
-
 // uint8_t posit8es0_add(uint8_t a, uint8_t b) {
 //   auto pa = get_posit<8, 0>(a);
 //   auto pb = get_posit<8, 0>(b);

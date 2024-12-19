@@ -1,5 +1,6 @@
 #pragma once
 
+#include <linux/stat.h>
 #include <stdint.h>
 #ifdef __cplusplus
 // export a C interface if used by C++ source code
@@ -51,10 +52,47 @@ DEFINE_NBITS_ESVAL(32, 3)
 
 #include <cstddef>
 #include <universal/number/posit/posit.hpp>
+
+// revise: NaR
 template <size_t nbits, typename uType>
-void wrap(uType a, sw::universal::bitblock<nbits> &raw);
+void wrap(uType a, sw::universal::bitblock<nbits> &raw) {
+  for (size_t i = 0; i < nbits; i++) {
+    raw[i] = a & 1;
+    a >>= 1;
+  }
+  // if negative, two's complement except the sign bit
+  if (raw[nbits - 1]) {
+    sw::universal::bitblock<nbits - 1> remain;
+    for (size_t i = 0; i < nbits - 1; i++) {
+      remain[i] = raw[i];
+    }
+    remain = sw::universal::internal::twos_complement(remain);
+    for (size_t i = 0; i < nbits - 1; i++) {
+      raw[i] = remain[i];
+    }
+  }
+}
+
+// revise: NaR
 template <size_t nbits, typename uType>
-void unwrap(sw::universal::bitblock<nbits> &raw, uType &a);
+void unwrap(sw::universal::bitblock<nbits> &raw, uType &a) {
+  if (raw[nbits - 1]) {
+    sw::universal::bitblock<nbits - 1> remain;
+    for (size_t i = 0; i < nbits - 1; i++) {
+      remain[i] = raw[i];
+    }
+    remain = sw::universal::internal::twos_complement(remain);
+    for (size_t i = 0; i < nbits - 1; i++) {
+      raw[i] = remain[i];
+    }
+  }
+
+  a = 0;
+  for (int i = (int)nbits - 1; i >= 0; i--) {
+    a <<= 1;
+    a |= raw[i];
+  }
+}
 
 // get posit from uType
 template <size_t nbits, size_t es, typename uType>
@@ -75,4 +113,16 @@ uType get_uType(sw::universal::posit<nbits, es> pa) {
   b_res = pa.get();
   unwrap<nbits>(b_res, res);
   return res;
+}
+
+template <size_t n_bits, size_t es, typename uType>
+double getDouble(uType rawBit) {
+  sw::universal::posit<n_bits, es> p = get_posit<n_bits, es>(rawBit);
+  return static_cast<double>(p);
+}
+
+template <size_t n_bits, size_t es, typename uType>
+uType getRawBit(double d) {
+  sw::universal::posit<n_bits, es> p(d);
+  return get_uType<n_bits, es, uType>(p);
 }
