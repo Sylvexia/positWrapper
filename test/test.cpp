@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <ctime>
-#include <universal/number/posit/posit_c_api_custom.h>
 #include <iostream>
+#include <positWrapperC.h>
 
 int main() { 
     int sample = 255;
