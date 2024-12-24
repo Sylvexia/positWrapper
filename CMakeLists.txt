@@ -4,7 +4,7 @@ project(positWrapper)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(UNIVERSAL_INCLUDE /home/sylvex/universal/include)
+set(UNIVERSAL_INCLUDE ${CMAKE_SOURCE_DIR}/3rd_party/universal/include)
 
 find_package(pybind11 REQUIRED)
 
