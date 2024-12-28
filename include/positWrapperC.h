@@ -18,6 +18,9 @@ extern "C" {
   uint##bits##_t posit##bits##es##es_val##_select(                             \
       bool condition, uint##bits##_t true_, uint##bits##_t false_);
 
+#define DEFINE_POSIT_UNARY_MATH(bits, es_val, op_name)                         \
+  uint##bits##_t posit##bits##es##es_val##_##op_name(uint##bits##_t a);
+
 #define DEFINE_NBITS_ESVAL(bits, es_val)                                       \
   DEFINE_POSIT(bits, es_val, add)                                              \
   DEFINE_POSIT(bits, es_val, sub)                                              \
@@ -29,7 +32,11 @@ extern "C" {
   DEFINE_POSIT_BOOL(bits, es_val, olt)                                         \
   DEFINE_POSIT_BOOL(bits, es_val, ole)                                         \
   DEFINE_POSIT_BOOL(bits, es_val, one)                                         \
-  DEFINE_POSIT_SELECT(bits, es_val)
+  DEFINE_POSIT_SELECT(bits, es_val)                                            \
+  DEFINE_POSIT_UNARY_MATH(bits, es_val, sqrt)                                  \
+  DEFINE_POSIT_UNARY_MATH(bits, es_val, exp)                                   \
+  DEFINE_POSIT_UNARY_MATH(bits, es_val, tanh)                                  \
+  DEFINE_POSIT_UNARY_MATH(bits, es_val, erf)
 
 DEFINE_NBITS_ESVAL(8, 0)
 DEFINE_NBITS_ESVAL(8, 1)
@@ -53,9 +60,15 @@ DEFINE_NBITS_ESVAL(32, 3)
 #include <cstddef>
 #include <universal/number/posit/posit.hpp>
 
-// revise: NaR
 template <size_t nbits, typename uType>
 void wrap(uType a, sw::universal::bitblock<nbits> &raw) {
+  // NaR handling
+  // if (((uType) 1 << (nbits - 1)) == a) {
+  //   raw.reset();
+  //   raw.set(nbits - 1, true);
+  //   return;
+  // }
+
   for (size_t i = 0; i < nbits; i++) {
     raw[i] = a & 1;
     a >>= 1;
@@ -73,9 +86,14 @@ void wrap(uType a, sw::universal::bitblock<nbits> &raw) {
   }
 }
 
-// revise: NaR
 template <size_t nbits, typename uType>
 void unwrap(sw::universal::bitblock<nbits> &raw, uType &a) {
+  // NaR handling
+  // if (raw[nbits - 1]) {
+  //   a = ((uType) 1 << (nbits - 1));
+  //   return;
+  // }
+
   if (raw[nbits - 1]) {
     sw::universal::bitblock<nbits - 1> remain;
     for (size_t i = 0; i < nbits - 1; i++) {
@@ -121,8 +139,7 @@ double getDouble(uType rawBit) {
   return static_cast<double>(p);
 }
 
-template <size_t n_bits, size_t es, typename uType>
-uType getRawBit(double d) {
+template <size_t n_bits, size_t es, typename uType> uType getRawBit(double d) {
   sw::universal::posit<n_bits, es> p(d);
   return get_uType<n_bits, es, uType>(p);
 }

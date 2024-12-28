@@ -1,44 +1,11 @@
-#include <universal/number/posit/posit.hpp>
 #include <positWrapperC.h>
+#include <universal/number/posit/posit.hpp>
 
 // uint8_t posit8es0_add(uint8_t a, uint8_t b) {
 //   auto pa = get_posit<8, 0>(a);
 //   auto pb = get_posit<8, 0>(b);
 
 //   auto pc = pa + pb;
-
-//   uint8_t res = get_uType<8, 0, uint8_t>(pc);
-
-//   return res;
-// }
-
-// uint8_t posit8es0_sub(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   auto pc = pa - pb;
-
-//   uint8_t res = get_uType<8, 0, uint8_t>(pc);
-
-//   return res;
-// }
-
-// uint8_t posit8es0_mul(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   auto pc = pa * pb;
-
-//   uint8_t res = get_uType<8, 0, uint8_t>(pc);
-
-//   return res;
-// }
-
-// uint8_t posit8es0_div(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   auto pc = pa / pb;
 
 //   uint8_t res = get_uType<8, 0, uint8_t>(pc);
 
@@ -54,41 +21,6 @@
 //   auto pb = get_posit<8, 0>(b);
 
 //   return pa == pb;
-// }
-
-// bool posit8es0_ogt(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   return pa > pb;
-// }
-
-// bool posit8es0_oge(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   return pa >= pb;
-// }
-
-// bool posit8es0_olt(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   return pa < pb;
-// }
-
-// bool posit8es0_ole(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   return pa <= pb;
-// }
-
-// bool posit8es0_one(uint8_t a, uint8_t b) {
-//   auto pa = get_posit<8, 0>(a);
-//   auto pb = get_posit<8, 0>(b);
-
-//   return pa != pb;
 // }
 
 #define SOURCE_POSIT_BASIC(bits, es_val, op_name, op_symbol)                   \
@@ -115,6 +47,14 @@
     return condition ? true_ : false_;                                         \
   }
 
+#define SOURCE_POSIT_UNARY_MATH(bits, es_val, op_name, op_symbol)              \
+  uint##bits##_t posit##bits##es##es_val##_##op_name(uint##bits##_t a) {       \
+    auto pa = get_posit<bits, es_val>(a);                                      \
+    auto pc = op_symbol<bits, es_val>(pa);                                     \
+    uint##bits##_t res = get_uType<bits, es_val, uint##bits##_t>(pc);          \
+    return res;                                                                \
+  }
+
 #define SOURCE_NBITS_ESVAL(bits, es_val)                                       \
   SOURCE_POSIT_BASIC(bits, es_val, add, +)                                     \
   SOURCE_POSIT_BASIC(bits, es_val, sub, -)                                     \
@@ -126,7 +66,11 @@
   SOURCE_POSIT_CMP(bits, es_val, olt, <)                                       \
   SOURCE_POSIT_CMP(bits, es_val, ole, <=)                                      \
   SOURCE_POSIT_CMP(bits, es_val, one, !=)                                      \
-  SOURCE_POSIT_SELECT(bits, es_val)
+  SOURCE_POSIT_SELECT(bits, es_val)                                            \
+  SOURCE_POSIT_UNARY_MATH(bits, es_val, sqrt, sqrt)                            \
+  SOURCE_POSIT_UNARY_MATH(bits, es_val, exp, exp)                              \
+  SOURCE_POSIT_UNARY_MATH(bits, es_val, tanh, tanh)                            \
+  SOURCE_POSIT_UNARY_MATH(bits, es_val, erf, erf)
 
 SOURCE_NBITS_ESVAL(8, 0)
 SOURCE_NBITS_ESVAL(8, 1)
