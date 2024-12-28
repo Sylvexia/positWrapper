@@ -21,6 +21,10 @@ extern "C" {
 #define DEFINE_POSIT_UNARY_MATH(bits, es_val, op_name)                         \
   uint##bits##_t posit##bits##es##es_val##_##op_name(uint##bits##_t a);
 
+// signed integer temperary just i32
+#define DEFINE_POSIT_SITOFP(bits, es_val)                                      \
+  uint##bits##_t posit##bits##es##es_val##_sitofp(int a);
+
 #define DEFINE_NBITS_ESVAL(bits, es_val)                                       \
   DEFINE_POSIT(bits, es_val, add)                                              \
   DEFINE_POSIT(bits, es_val, sub)                                              \
@@ -36,7 +40,8 @@ extern "C" {
   DEFINE_POSIT_UNARY_MATH(bits, es_val, sqrt)                                  \
   DEFINE_POSIT_UNARY_MATH(bits, es_val, exp)                                   \
   DEFINE_POSIT_UNARY_MATH(bits, es_val, tanh)                                  \
-  DEFINE_POSIT_UNARY_MATH(bits, es_val, erf)
+  DEFINE_POSIT_UNARY_MATH(bits, es_val, erf)                                   \
+  DEFINE_POSIT_SITOFP(bits, es_val)
 
 DEFINE_NBITS_ESVAL(8, 0)
 DEFINE_NBITS_ESVAL(8, 1)

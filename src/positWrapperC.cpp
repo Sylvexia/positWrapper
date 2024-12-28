@@ -55,6 +55,14 @@
     return res;                                                                \
   }
 
+#define SOURCE_POSIT_SITOFP(bits, es_val)                                      \
+  uint##bits##_t posit##bits##es##es_val##_sitofp(int a) {                     \
+    double da = static_cast<double>(a);                                        \
+    auto pa = sw::universal::posit<bits, es_val>(da);                          \
+    uint##bits##_t res = get_uType<bits, es_val, uint##bits##_t>(pa);          \
+    return res;                                                                \
+}
+
 #define SOURCE_NBITS_ESVAL(bits, es_val)                                       \
   SOURCE_POSIT_BASIC(bits, es_val, add, +)                                     \
   SOURCE_POSIT_BASIC(bits, es_val, sub, -)                                     \
@@ -70,7 +78,8 @@
   SOURCE_POSIT_UNARY_MATH(bits, es_val, sqrt, sqrt)                            \
   SOURCE_POSIT_UNARY_MATH(bits, es_val, exp, exp)                              \
   SOURCE_POSIT_UNARY_MATH(bits, es_val, tanh, tanh)                            \
-  SOURCE_POSIT_UNARY_MATH(bits, es_val, erf, erf)
+  SOURCE_POSIT_UNARY_MATH(bits, es_val, erf, erf)                              \
+  SOURCE_POSIT_SITOFP(bits, es_val)
 
 SOURCE_NBITS_ESVAL(8, 0)
 SOURCE_NBITS_ESVAL(8, 1)
