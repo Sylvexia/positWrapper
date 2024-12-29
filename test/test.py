@@ -31,3 +31,11 @@ print(bin(rawBit))
 
 doubleVal = posit.getDouble_64_3(rawBit)
 print(doubleVal)
+
+print("posit(8, 2)")
+
+rawBit = posit.getRawBit_8_2(3.14)
+print(bin(rawBit))
+
+doubleVal = posit.getDouble_8_2(rawBit)
+print(doubleVal)
