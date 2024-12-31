@@ -55,7 +55,8 @@ print(doubleVal)
 array = np.array([[1, 2, 4, 8, -32], [1, 2, 4, 8, -255]], dtype=np.int8)
 doubleArray = posit.getDoubleArray_8_2(array)
 print(doubleArray)
-print(doubleArray.dtype)
+array = posit.getRawBitArray_8_2(doubleArray)
+print(array)
 
 # test getRawBitArray_8_2
 
